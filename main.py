@@ -96,7 +96,7 @@ def fetch_vulnerability_data(vulnerability_id: str, exploit_db_url: str) -> Tupl
         search_url = f"{exploit_db_url}search?value={vulnerability_id}"
         logging.info(f"Fetching vulnerability data from: {search_url}")
 
-        response = requests.get(search_url)
+        response = requests.get(search_url, timeout=15)
         response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
 
         soup = BeautifulSoup(response.content, "html.parser")
@@ -167,22 +167,23 @@ def identify_vulnerable_code_lines(
                     try:
                         with open(filepath, "r", encoding="utf-8") as f:
                             code = f.read()
-                            tree = ast.parse(code)
+                            ast.parse(code)
 
-                            # Simple heuristic: Check for lines containing keywords from the vulnerability description or exploit
+                            # The file is parsed only to confirm it is
+                            # valid Python worth scanning. The match
+                            # itself is a single pass over the lines:
+                            # walking every AST node and re-reading its
+                            # whole line range re-reported the same line
+                            # once per enclosing node, and ast.Module
+                            # has no lineno, which failed the whole file.
                             keywords = re.split(r'\W+', vulnerability_description + " " + exploit_details)
-                            keywords = [k.lower() for k in keywords if k]
+                            keywords = [k.lower() for k in keywords if len(k) > 2]
 
-                            for node in ast.walk(tree):
-                                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
-                                    for lineno in range(node.lineno, getattr(node, 'end_lineno', node.lineno) + 1 if hasattr(node, 'end_lineno') else node.lineno + 1):
-                                        try:
-                                            line = linecache.getline(filepath, lineno).strip().lower() # Linecache
-                                            if any(keyword in line for keyword in keywords):
-                                                vulnerable_lines.append((filepath, lineno))
-                                        except Exception as le:
-                                            logging.warning(f"Error accessing line {lineno} in {filepath}: {le}")
-
+                            with open(filepath, "r", encoding="utf-8") as src:
+                                for lineno, raw in enumerate(src, start=1):
+                                    line = raw.strip().lower()
+                                    if any(keyword in line for keyword in keywords):
+                                        vulnerable_lines.append((filepath, lineno))
 
                     except Exception as e:
                         logging.error(f"Error analyzing file {filepath}: {e}")
@@ -193,8 +194,6 @@ def identify_vulnerable_code_lines(
         raise CodeAnalysisError(f"Failed to analyze codebase: {e}")
 
     return vulnerable_lines
-
-import linecache
 
 def suggest_fixes(filepath: str, vulnerable_line_number: int, vulnerability_description: str, exploit_details: str) -> str:
     """
@@ -363,6 +362,10 @@ def main():
             sys.exit(1)
 
 
+        if not os.path.isdir(args.codebase_path):
+            logging.error(f"Codebase path is not a directory: {args.codebase_path}")
+            sys.exit(1)
+
         # 2. Identify vulnerable code lines.
         vulnerable_lines = identify_vulnerable_code_lines(
             args.codebase_path, vulnerability_description, exploit_details
@@ -427,21 +430,3 @@ if __name__ == "__main__":
     main()
 
 
-"""
-Usage Examples:
-
-1.  Run the tool to identify and remediate a vulnerability in a codebase, requiring manual approval before applying changes:
-
-    python avr_vulncode_line_remediator.py --vulnerability_id CVE-2023-4567 --codebase_path /path/to/codebase --approval_required
-
-2.  Run the tool without manual approval, automatically applying the generated patches:
-
-    python avr_vulncode_line_remediator.py --vulnerability_id CVE-2023-4567 --codebase_path /path/to/codebase
-
-3.  Specify a custom output path for the generated patch file:
-
-    python avr_vulncode_line_remediator.py --vulnerability_id CVE-2023-4567 --codebase_path /path/to/codebase --output_patch_path my_patch.diff
-
-4. Specify a custom Exploit Database URL:
-    python avr_vulncode_line_remediator.py --vulnerability_id CVE-2023-4567 --codebase_path /path/to/codebase --exploit_db_url https://example.com/exploitdb/
-"""
