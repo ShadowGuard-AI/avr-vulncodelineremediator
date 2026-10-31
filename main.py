@@ -61,9 +61,14 @@ def setup_argparse():
         help="The path to save the generated patch file. Defaults to 'patch.diff'.",
     )
     parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Apply code changing patches to the files in place. Without this flag a run only writes the patch file and changes no scanned file. Suggestions that only add a comment are never applied; they are written to the patch file as manual steps.",
+    )
+    parser.add_argument(
         "--approval_required",
         action="store_true",
-        help="Require manual approval before applying changes (interactive mode).",
+        help="With --apply, ask before applying each patch (interactive mode). Has no effect without --apply.",
     )
     parser.add_argument(
         "--exploit_db_url",
@@ -142,9 +147,10 @@ def identify_vulnerable_code_lines(
     codebase_path: str, vulnerability_description: str, exploit_details: str
 ) -> List[Tuple[str, int]]:
     """
-    Identifies vulnerable code lines in the codebase based on the vulnerability description
-    and exploit details.  Uses AST to parse the code and identify potentially vulnerable blocks.
-    This is a simplified example; a real implementation would require more sophisticated analysis.
+    Identifies code lines in the codebase based on the vulnerability description
+    and exploit details. Each file is parsed with ast.parse only to confirm it
+    parses; the match itself is a keyword line scan over the file lines, using
+    the words from the fetched description and exploit text.
 
     Args:
         codebase_path (str): The path to the codebase.
@@ -344,6 +350,46 @@ def apply_patch(filepath: str, patch_content: str) -> None:
         raise PatchGenerationError(f"Failed to apply patch: {e}")
 
 
+def is_manual_suggestion(original_line: str, suggested_fix: str) -> bool:
+    """
+    A suggestion is a manual step when it changes no code: once its
+    comment lines are removed, what is left is the original line,
+    unchanged. The os.system and pickle.load suggestions are of this
+    shape (a warning comment above the line they name), so the named
+    line would keep running if the comment were applied and the run
+    logged it as a fix. Manual steps are never auto applied.
+    """
+    code_lines = [
+        line for line in suggested_fix.splitlines()
+        if not line.lstrip().startswith("#")
+    ]
+    return [line.rstrip() for line in code_lines] == [original_line.rstrip("\n")]
+
+
+def read_line(filepath: str, line_number: int) -> str:
+    """Reads one line of a file, or an empty string when out of range."""
+    with open(filepath, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    if 1 <= line_number <= len(lines):
+        return lines[line_number - 1]
+    return ""
+
+
+def ensure_getpass_import(filepath: str) -> None:
+    """
+    The input() fix rewrites a call to getpass.getpass, which is a
+    NameError in a file that never imported getpass. Add the import
+    once, after that file's patches have been applied, when an applied
+    fix uses getpass and the file does not import it yet.
+    """
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
+    if "getpass.getpass(" in content and "import getpass" not in content:
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write("import getpass\n" + content)
+        logging.info(f"Added import getpass to {filepath}")
+
+
 def main():
     """
     Main function to orchestrate the vulnerability remediation process.
@@ -378,38 +424,89 @@ def main():
         logging.info(f"Found {len(vulnerable_lines)} potentially vulnerable lines.")
 
 
-        # 3. Generate and optionally apply patches.
-        all_patches = ""
+        # 3. Collect suggestions first, against the files as scanned.
+        # Nothing is written to a scanned file in this step, so every
+        # line number still refers to the original file.
+        entries = []
         for filepath, line_number in vulnerable_lines:
-            # Suggest a fix.
             suggested_fix = suggest_fixes(filepath, line_number, vulnerability_description, exploit_details)
-
-            if suggested_fix:
-                logging.info(f"Suggested fix: {suggested_fix}")
-                # Generate a patch.
-                patch_content = generate_patch(filepath, line_number, suggested_fix)
-
-                if patch_content:
-                    print(f"Generated patch:\n{patch_content}")
-                    all_patches += patch_content
-                    if args.approval_required:
-                        approval = input(f"Apply patch to {filepath} (y/n)? ").lower()
-                        if approval == "y":
-                            apply_patch(filepath, patch_content)
-                        else:
-                            logging.info(f"Patch for {filepath} not applied.")
-                    else:
-                        apply_patch(filepath, patch_content)
-                else:
-                    logging.warning(f"No patch generated for {filepath}:{line_number}")
-            else:
+            if not suggested_fix:
                 logging.warning(f"No fix suggested for {filepath}:{line_number}")
-        
-        # Save all patches to a single file if there are patches to save
+                continue
+            original_line = read_line(filepath, line_number)
+            entries.append({
+                "filepath": filepath,
+                "line_number": line_number,
+                "suggested_fix": suggested_fix,
+                "manual": is_manual_suggestion(original_line, suggested_fix),
+            })
+
+        # Order entries per file from the highest line number down, so
+        # applying one patch cannot shift the line numbers of the
+        # patches that come after it in the same file.
+        entries.sort(key=lambda e: (e["filepath"], -e["line_number"]))
+
+        # 4. Build the patch file. Code changing suggestions become
+        # diffs, generated against the original files before any
+        # applying. Comment only suggestions become manual steps in
+        # the patch file and are never auto applied.
+        all_patches = ""
+        applied_files = []
+        for entry in entries:
+            filepath = entry["filepath"]
+            line_number = entry["line_number"]
+            suggested_fix = entry["suggested_fix"]
+            logging.info(f"Suggested fix for {filepath}:{line_number}: {suggested_fix}")
+            if entry["manual"]:
+                entry["patch_content"] = ""
+                all_patches += (
+                    f"# MANUAL STEP (not auto-applied): {filepath}:{line_number}\n"
+                    f"# This suggestion changes no code. Apply it by hand:\n"
+                    f"# {suggested_fix}\n\n"
+                )
+                logging.info(f"Manual step (not applied): {filepath}:{line_number} changes no code and needs a hand fix.")
+                continue
+            patch_content = generate_patch(filepath, line_number, suggested_fix)
+            if patch_content:
+                print(f"Generated patch:\n{patch_content}")
+                entry["patch_content"] = patch_content
+                all_patches += patch_content
+            else:
+                entry["patch_content"] = ""
+                logging.warning(f"No patch generated for {filepath}:{line_number}")
+
+        # Save all patches and manual steps to a single file.
         if all_patches:
             with open(args.output_patch_path, "w", encoding="utf-8") as f:
                 f.write(all_patches)
             logging.info(f"All generated patches saved to {args.output_patch_path}")
+
+        # 5. Apply only under --apply, and only the code changing
+        # patches, in the bottom up order set above. A default run
+        # stops at the patch file and changes no scanned file.
+        if not args.apply:
+            logging.info("No files changed. Pass --apply to apply the code changing patches in place; manual steps are never auto applied.")
+        else:
+            for entry in entries:
+                if entry["manual"] or not entry["patch_content"]:
+                    continue
+                filepath = entry["filepath"]
+                if args.approval_required:
+                    approval = input(f"Apply patch to {filepath} (y/n)? ").lower()
+                    if approval != "y":
+                        logging.info(f"Patch for {filepath} not applied.")
+                        continue
+                # Regenerate the diff against the file as it stands
+                # now, in this bottom up order: a diff written against
+                # the original file can fail on context lines that a
+                # neighbouring patch in the same file already changed.
+                # The patch file saved above keeps the original diffs,
+                # which replay against the original file.
+                fresh_patch = generate_patch(filepath, entry["line_number"], entry["suggested_fix"])
+                apply_patch(filepath, fresh_patch)
+                applied_files.append(filepath)
+            for filepath in dict.fromkeys(applied_files):
+                ensure_getpass_import(filepath)
 
 
     except VulnerabilityDatabaseError as e:

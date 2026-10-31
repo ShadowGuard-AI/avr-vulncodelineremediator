@@ -1,7 +1,7 @@
 ![Banner](banner.png)
 
 # avr-VulnCodeLineRemediator
-Given a known vulnerability and a codebase, identify the exact lines of code that need remediation based on available vulnerability databases and security advisories and generates patch files to address these vulnerabilities. Utilizes AST analysis to identify and suggest fixes only on vulnerable blocks, and supports manual approval of suggestions before automatically committing the changes. - Focused on Tools that automatically identify and apply remediation strategies for known software vulnerabilities in web applications and infrastructure. Focuses on leveraging publicly available exploit databases and patch information to generate and apply fixes.
+Given a known vulnerability and a codebase, this tool scans for the lines that may need remediation and writes a patch file for them. The scan is a keyword line scan over Python files that parse (`ast.parse` is used only to confirm a file parses, not to match blocks): it fetches the search page for the vulnerability ID from the database base URL given, takes the text of the first cell of the first table on that page as the description, splits that text into keywords, and lists every line containing one of those keywords. A default run changes no scanned file; it only writes the patch file. Passing `--apply` applies the code changing patches in place, per file from the highest line number down. Suggestions that only add a comment, such as the `os.system` and `pickle.load` warnings, change no code, so they are written to the patch file as manual steps, are never auto applied, and are logged as manual steps, not as applied fixes.
 
 ## Install
 `git clone https://github.com/ShadowStrikeHQ/avr-vulncodelineremediator`
@@ -14,7 +14,8 @@ Given a known vulnerability and a codebase, identify the exact lines of code tha
 - `--vulnerability_id`: No description provided
 - `--codebase_path`: The path to the codebase to scan.
 - `--output_patch_path`: The path to save the generated patch file. Defaults to 
-- `--approval_required`: No description provided
+- `--apply`: Apply code changing patches to the files in place. Without this flag a run only writes the patch file and changes no scanned file. Comment only suggestions are never applied; they appear in the patch file as manual steps.
+- `--approval_required`: With `--apply`, ask before applying each patch. Has no effect without `--apply`.
 - `--exploit_db_url`: The base URL of the Exploit Database to use for vulnerability information.
 
 ## License
