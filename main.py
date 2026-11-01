@@ -110,7 +110,13 @@ def fetch_vulnerability_data(vulnerability_id: str, exploit_db_url: str) -> Tupl
         vulnerability_description = ""
         exploit_details = ""
         
-        # Find the first table on the page
+        # What comes back as the description is the first cell of the
+        # first row of the first table on a search results page. That
+        # is a fragile thing to build on: it can as easily be a date or
+        # an exploit title as a description, and everything downstream,
+        # the keyword scan of the codebase included, takes its words
+        # from this cell. Treat the fetched text as a lead, not as a
+        # verified description of the named vulnerability.
         table = soup.find("table")
         if table:
             # Find all rows in the table
@@ -183,6 +189,15 @@ def identify_vulnerable_code_lines(
                             # once per enclosing node, and ast.Module
                             # has no lineno, which failed the whole file.
                             keywords = re.split(r'\W+', vulnerability_description + " " + exploit_details)
+                            # No stopword filtering, and the test below
+                            # is substring, not word, matching. A keyword
+                            # like the survives the length test and marks
+                            # nearly every line, and a short keyword
+                            # matches inside longer words. The line list
+                            # this produces is a coarse net by design;
+                            # the fix stage only fires on three exact
+                            # call shapes, which is what keeps the net
+                            # from turning into mass edits.
                             keywords = [k.lower() for k in keywords if len(k) > 2]
 
                             with open(filepath, "r", encoding="utf-8") as src:
@@ -269,7 +284,11 @@ def generate_patch(filepath: str, vulnerable_line_number: int, suggested_fix: st
         PatchGenerationError: If an error occurs during patch generation.
     """
     try:
-        # Create a temporary file with the original code.
+        # The original temp file written here is never actually read:
+        # the diff below re-reads the target file and the modified
+        # temp. It is kept as a byproduct of how this function grew,
+        # and on an exception before the cleanup at the bottom both
+        # temp files are left behind in the temp directory.
         with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".tmp") as original_file:
             with open(filepath, "r", encoding="utf-8") as f:
                 original_code = f.readlines()
