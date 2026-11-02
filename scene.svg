@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="The preparation bench in three bands: the warm lamp brightens and dims slowly on the far shelf, a highlight travels across the polished slab face in the middle while the slab stays still and a dry brush strokes at long intervals, and metal dust motes drift down at the bench front">
+<rect x="0" y="0" width="1200" height="300" fill="#211d18"/>
+<rect x="0" y="30" width="1200" height="90" fill="#2c2721"/>
+<g fill="#c68a2c">
+<rect x="90" y="48" width="46" height="58" rx="7" opacity="0.85"/><rect x="170" y="42" width="46" height="64" rx="7" opacity="0.7"/><rect x="250" y="50" width="46" height="56" rx="7" opacity="0.8"/><rect x="880" y="44" width="46" height="62" rx="7" opacity="0.65"/><rect x="960" y="50" width="46" height="56" rx="7" opacity="0.75"/>
+</g>
+<rect x="60" y="112" width="980" height="6" fill="#100e0c"/>
+<g fill="#b9b2a0">
+<rect x="700" y="36" width="150" height="76"/><circle cx="742" cy="62" r="2.4" fill="#4a463e"/><circle cx="792" cy="84" r="2.4" fill="#4a463e"/><circle cx="820" cy="54" r="2.4" fill="#4a463e"/><circle cx="760" cy="66" r="11" fill="none" stroke="#8a8474" stroke-width="2"/>
+</g>
+<circle cx="1120" cy="86" r="17" fill="#ffc468">
+<animate attributeName="opacity" values="1;0.55;1" dur="9s" repeatCount="indefinite"/>
+</circle>
+<circle cx="1120" cy="86" r="34" fill="#ffb054" opacity="0.25">
+<animate attributeName="opacity" values="0.28;0.1;0.28" dur="9s" repeatCount="indefinite"/>
+</circle>
+<rect x="0" y="196" width="1200" height="104" fill="#3e3226"/>
+<ellipse cx="470" cy="238" rx="230" ry="44" fill="#5a5852"/>
+<g stroke="#e6e2d4" fill="none">
+<path d="M262 224 L640 208" stroke-width="7"/><path d="M300 258 L690 224" stroke-width="5"/><path d="M330 200 L470 276" stroke-width="6"/><path d="M560 198 L420 272" stroke-width="4"/><path d="M262 244 L660 252" stroke-width="5"/>
+</g>
+<ellipse cx="330" cy="232" rx="200" ry="40" fill="#f2ecd8" opacity="0">
+<animate attributeName="cx" values="330;470;620;620" keyTimes="0;0.4;0.72;1" dur="16s" repeatCount="indefinite"/>
+<animate attributeName="opacity" values="0;0.26;0.26;0" keyTimes="0;0.12;0.72;1" dur="16s" repeatCount="indefinite"/>
+</ellipse>
+<g stroke="#7a5830" stroke-width="7">
+<path d="M660 272 L742 292">
+<animateTransform attributeName="transform" type="rotate" values="0 660 272;0 660 272;-7 660 272;0 660 272;0 660 272" keyTimes="0;0.55;0.65;0.75;1" dur="13s" repeatCount="indefinite"/>
+</path>
+</g>
+<path d="M742 292 L772 298" stroke="#d8d2c0" stroke-width="6"/>
+<g fill="#e8e2cf">
+<circle cx="180" cy="206" r="2.2"><animate attributeName="cy" values="206;292" dur="11s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.85;0" dur="11s" repeatCount="indefinite"/></circle>
+<circle cx="300" cy="196" r="1.7"><animate attributeName="cy" values="196;288" dur="14s" begin="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0" dur="14s" begin="4s" repeatCount="indefinite"/></circle>
+<circle cx="90" cy="216" r="1.9"><animate attributeName="cy" values="216;294" dur="12s" begin="7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.75;0" dur="12s" begin="7s" repeatCount="indefinite"/></circle>
+</g>
+</svg>
