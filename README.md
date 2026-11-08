@@ -1,10 +1,8 @@
-![The bench before any hand reaches it: the rough half of the meteorite on a folded cloth, fine metal dust in a pale fan beside it, the sawn half polished face up with its crossing bands catching cool light, amber jars and a saw silhouette behind, one warm lamp at the far end, no label anywhere](intro-banner.png)
+![A single white chalk line ruled across charcoal suiting cloth on a pine tailor's bench, a needle threaded with red resting on the cloth at the line's end and folded garments stacked soft behind](intro-banner.png)
 
 # avr-VulnCodeLineRemediator
 
-![The preparation bench with the opened meteorite at its centre, the diamond saw idle at the back, the field notebook open with ruled empty pages, and the name avr-vulncodelineremediator on the bone white specimen label taped to the bench edge below the slab](banner.png)
-
-![A sawn meteorite slab seen flat from above, its Widmanstatten bands crossing at sharp angles, a shallow etched border at the edge, and a blank tag red label on a wire at the lower right, the heading plate](logo.png)
+![A tailor's bench in flat window light: folded garments in a row with plain blank tags tied to them, the centre garment bearing plain white chalk tally and cross hatch marks with a needle threaded in red resting on its fold, thread spools and a tailor's measuring tape at the bench edge](banner.png)
 
 ![Bench scene in three bands: the warm lamp brightens and dims slowly on the far shelf, a highlight travels across the polished slab face while the slab stays still and a dry etching brush strokes at long intervals, and metal dust motes drift down at the bench front](scene.svg)
 

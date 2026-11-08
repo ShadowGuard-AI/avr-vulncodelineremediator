@@ -3,97 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>avr-vulncodelineremediator: Meteorite Saw and the Widmanstatten Lines</title>
-<meta name="description" content="A keyword line scan over Python files that parse, a patch file by default, and manual steps that are never auto applied.">
+<title>avr-vulncodelineremediator: The Alteration Bench</title>
 <style>
-@font-face{font-family:'Bahiana';src:url('fonts/Bahiana.ttf') format('truetype');}
-@font-face{font-family:'Alegreya Sans';src:url('fonts/AlegreyaSans.ttf') format('truetype');}
-@font-face{font-family:'Alegreya Sans';src:url('fonts/AlegreyaSans-Bold.ttf') format('truetype');font-weight:700;}
-:root{--black:#12100e;--bone:#eee8d8;--amber:#c68a2c;--amberbg:#8a5f16;--red:#b22c24;--ink:#1c1a16}
-*{box-sizing:border-box}body{margin:0;background:var(--black);color:var(--bone);font-family:'Alegreya Sans',sans-serif;line-height:1.65}
-h1,h2,h3{font-family:'Bahiana',cursive;font-weight:400;letter-spacing:.02em}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end}
-.hero img.heroimg{width:100%;height:58vh;object-fit:cover;display:block}
-.hero .in{padding:1rem 6vw 2rem;max-width:1120px;margin:0 auto;width:100%}
-.logo{width:210px;border-radius:6px}
-main{padding:0 6vw 3rem;max-width:1120px;margin:0 auto}
-nav{display:flex;gap:1rem;flex-wrap:wrap;margin:1.2rem 0}
-.offcut{display:inline-block;text-decoration:none;color:var(--bone);font-family:'Bahiana',cursive;font-size:1.05rem;padding:.7rem 1.9rem .7rem 1.4rem;border-radius:50%;position:relative;background:linear-gradient(28deg,transparent 44%,rgba(238,232,216,.34) 46%,rgba(238,232,216,.34) 50%,transparent 52%),linear-gradient(-52deg,transparent 58%,rgba(238,232,216,.22) 60%,rgba(238,232,216,.22) 64%,transparent 66%),linear-gradient(160deg,#4a4741,#2c2a26);box-shadow:inset 0 0 0 2px rgba(238,232,216,.4);transition:transform .12s,filter .15s}
-.offcut::after{content:'';position:absolute;right:-7px;top:50%;width:13px;height:13px;margin-top:-7px;border:3px solid var(--red);border-radius:50%;background:var(--black)}
-.offcut:hover{filter:brightness(1.45)}
-.offcut:active{transform:rotate(-2.5deg)}
-.offcut:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:50%}
-.offcut.guarded{background:linear-gradient(28deg,transparent 44%,rgba(238,232,216,.3) 46%,rgba(238,232,216,.3) 50%,transparent 52%),linear-gradient(160deg,#5a4230,#33241a)}
-a{color:#f4cf8a}
-a::before{content:'';display:inline-block;width:20px;height:3px;margin-right:.5em;vertical-align:middle;background:var(--red);border-radius:2px;box-shadow:5px 0 0 -1px var(--red)}
-.offcut::before{content:none}
-.box{background:var(--bone);color:var(--ink);border:6px solid #060505;border-radius:10px;padding:.4rem 1.6rem 1.4rem;margin:1.8rem 0;position:relative;box-shadow:inset 0 0 0 2px rgba(18,16,14,.25)}
-.box::before{content:'';position:absolute;top:10px;right:12px;width:13px;height:13px;border:3px solid #6a6558;border-radius:50%}
-.box h2{color:var(--ink);border-bottom:2px solid rgba(18,16,14,.3);padding-bottom:.3rem;font-size:1.9rem}
-pre{background:#1d1a16;color:var(--bone);padding:1rem;overflow-x:auto;font-size:.95rem}
-.cut{height:14px;margin:2.2rem 0;position:relative;background:linear-gradient(var(--bone),var(--bone));background-size:100% 2px;background-position:0 2px;background-repeat:no-repeat}
-.cut::before{content:'';position:absolute;left:0;right:0;top:6px;height:5px;background-image:radial-gradient(rgba(238,232,216,.55) 1px,transparent 1.4px);background-size:17px 5px}
-.cut::after{content:'';position:absolute;left:7%;top:-3px;width:52px;height:8px;background:linear-gradient(120deg,transparent 40%,rgba(238,232,216,.85) 46%,rgba(238,232,216,.85) 56%,transparent 62%)}
-.jar{background:var(--amberbg);color:#fff8ea;border-radius:8px;padding:.2rem 1.3rem 1rem;margin:1.3rem 0}
-.jar h3{font-size:1.5rem;margin:.7rem 0 .3rem}
-.param{display:flex;gap:1rem;padding:.55rem 0;border-bottom:1px solid rgba(18,16,14,.22)}
-.param b{font-family:'Bahiana',cursive;font-weight:400;font-size:1.15rem;min-width:170px;letter-spacing:.03em}
-.absent{color:#8a5f16;font-weight:700}
-footer{padding:1rem 6vw 2.4rem;max-width:1120px;margin:0 auto}
+@font-face { font-family: "Kalam"; src: url("fonts/Kalam-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Kalam"; src: url("fonts/Kalam-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Hind Madurai"; src: url("fonts/HindMadurai-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Hind Madurai"; src: url("fonts/HindMadurai-700.woff2") format("woff2"); font-weight: 700; }
+:root {
+  --cloth: #33302e; --bench: #f3ead9; --pine: #a97c50; --ink: #2b2724;
+  --soft: #6e6257; --red: #b23a2e; --line: #ddd0ba; --card: #fffdf8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bench); color: var(--ink); font-family: "Hind Madurai", sans-serif; line-height: 1.55; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 64px; }
+header.hero { text-align: center; padding: 52px 0 8px; }
+h1, h2 { font-family: "Kalam", cursive; font-weight: 700; line-height: 1.15; }
+h1 { font-size: clamp(28px, 5vw, 46px); margin: 10px 0 6px; }
+.tagline { color: var(--soft); font-size: 19px; margin: 0 auto; max-width: 660px; }
+.btns { margin: 22px 0 6px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+a.btn { font-family: "Kalam", cursive; text-decoration: none; padding: 10px 22px; border-radius: 6px; border: 2px dashed var(--pine); color: var(--cloth); background: transparent; }
+a.btn.solid { background: var(--red); border-color: var(--red); color: #fff; }
+figure { margin: 30px 0; }
+figure img { width: 100%; border-radius: 8px; display: block; box-shadow: 0 8px 28px rgba(43,39,36,.20); }
+figcaption { color: var(--soft); font-size: 15px; text-align: center; margin-top: 9px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 34px 0; }
+.fact { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--pine); border-radius: 8px; padding: 14px 16px; }
+.fact b { display: block; font-family: "Kalam", cursive; font-weight: 700; font-size: 15px; letter-spacing: .03em; color: var(--red); margin-bottom: 4px; }
+section { margin: 38px 0; }
+h2 { font-size: 27px; margin: 0 0 12px; border-bottom: 2px dashed var(--line); padding-bottom: 7px; }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+pre { background: var(--cloth); color: #f3ecdd; padding: 15px 18px; border-radius: 8px; overflow-x: auto; font-size: 14.5px; }
+table { border-collapse: collapse; width: 100%; background: var(--card); }
+th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+th { font-family: "Kalam", cursive; font-weight: 700; background: var(--bench); }
+.hold { background: #fdf6ee; border: 1px solid #e8d3b8; border-left: 6px solid var(--red); border-radius: 8px; padding: 16px 20px; }
+.hold h2 { border: none; padding: 0; }
+.hold ul { margin: 8px 0 4px; padding-left: 20px; }
+footer { margin-top: 52px; border-top: 2px dashed var(--line); padding-top: 16px; color: var(--soft); font-size: 14.5px; text-align: center; }
 </style>
 </head>
 <body>
+<div class="wrap">
 <header class="hero">
-<img class="heroimg" src="assets/intro-banner.png" alt="A preparation bench before any hand reaches it: the rough half of a meteorite on a cloth, the sawn half showing crossing etched bands, amber jars behind, no label anywhere">
-<div class="in">
-<img class="logo" src="assets/logo.png" alt="A sawn meteorite slab with crossing Widmanstatten bands, a blank red tag at its lower right, and the name avr-vulncodelineremediator beneath">
-<h1>avr-vulncodelineremediator</h1>
-<p>The bench laid out left to right, the way work crosses it: raw stone, sawn face, written record. Etching brings a hidden pattern to the surface of a stone. This scan brings the lines that match a known vulnerability to the surface of a codebase, listed, not yet changed.</p>
-<nav>
-<a class="offcut" href="#patch">Write the Patch File</a>
-<a class="offcut guarded" href="#apply">Apply Patches In Place</a>
-<a class="offcut" href="#params">The Seven Parameters</a>
-<a class="offcut" href="#licence">Licence</a>
-</nav>
-</div>
+  <h1>avr-vulncodelineremediator</h1>
+  <p class="tagline">The Alteration Bench. Given a known vulnerability and a codebase, this tool marks the lines that may need remediation and writes them into a patch file. Like chalk on suiting, the marks come first; a default run cuts nothing.</p>
+  <div class="btns">
+    <a class="btn solid" href="https://github.com/ShadowGuard-AI/avr-vulncodelineremediator">The repository</a>
+    <a class="btn" href="https://github.com/ShadowGuard-AI/avr-vulncodelineremediator/blob/main/main.py">main.py</a>
+  </div>
 </header>
-<main>
-<section class="box" id="found"><h2>How the Lines Are Found</h2>
-<p>The tool takes a known vulnerability and a codebase. It fetches the search page for the vulnerability ID from the database base URL given, takes the text of the first cell of the first table on that page as the description, splits that text into keywords, and lists every line in Python files containing one of those keywords.</p>
-<p>On this same bench length, and not in a footnote: <b>ast.parse is used only to confirm a file parses, not to match blocks</b>, so the scan is a keyword line scan and nothing more structural is claimed.</p>
+
+<figure>
+  <img src="assets/intro-banner.png" alt="A single white chalk line ruled across charcoal suiting cloth on a pine tailor's bench, a needle threaded with red resting on the cloth at the line's end and folded garments stacked soft behind">
+  <figcaption>One line, marked. The scan lists every line that carries one of its keywords.</figcaption>
+</figure>
+
+<div class="facts">
+  <div class="fact"><b>The scan</b>A keyword line scan over the Python files in a codebase that parse</div>
+  <div class="fact"><b>The keywords</b>Split from the description text in the first cell of the first table on the vulnerability's search page</div>
+  <div class="fact"><b>The output</b>A patch file listing the matching lines and the suggested patches</div>
+  <div class="fact"><b>Dependencies</b>requests and beautifulsoup4</div>
+</div>
+
+<section>
+  <h2>Parameters</h2>
+  <table>
+    <tr><th>Option</th><th>What the README records</th></tr>
+    <tr><td><code>--vulnerability_id</code></td><td>No description provided.</td></tr>
+    <tr><td><code>--codebase_path</code></td><td>The path to the codebase to scan.</td></tr>
+    <tr><td><code>--output_patch_path</code></td><td>The path to save the generated patch file. The entry in the source breaks off at the words "Defaults to", with no default value shown.</td></tr>
+    <tr><td><code>--apply</code></td><td>Apply code changing patches to the files in place, per file from the highest line number down.</td></tr>
+    <tr><td><code>--approval_required</code></td><td>With <code>--apply</code>, ask before applying each patch. Has no effect without <code>--apply</code>.</td></tr>
+    <tr><td><code>--exploit_db_url</code></td><td>The base URL of the Exploit Database to use for vulnerability information.</td></tr>
+    <tr><td><code>-h</code></td><td>Show help message and exit.</td></tr>
+  </table>
+  <p>The scan fetches the search page for the vulnerability ID from the database base URL given, takes the text of the first cell of the first table on that page as the description, splits that text into keywords, and lists every line containing one of those keywords. <code>ast.parse</code> is used only to confirm a file parses, not to match blocks.</p>
 </section>
-<div class="cut"></div>
-<section class="box" id="patch"><h2>The Patch File</h2>
-<p id="apply">A default run changes no scanned file and only writes the patch file. Passing --apply applies the code changing patches in place, per file from the highest line number down.</p>
-<div class="jar"><h3>Comment Only Means By Hand</h3>
-<p>Comment only suggestions, such as the os.system and pickle.load warnings, change no code. They are written to the patch file as manual steps, are never auto applied, and are logged as manual steps rather than as applied fixes.</p></div>
-<h2>Manual Steps Are Never Applied</h2>
-<p>That warning stands on the bench where a reader about to pass --apply will meet it: if a suggestion only adds a comment, the tool writes it down and leaves the code alone.</p>
+
+<figure>
+  <img src="assets/banner.png" alt="A tailor's bench in flat window light: folded garments in a row with plain blank tags tied to them, the centre garment bearing plain white chalk tally and cross hatch marks with a needle threaded in red resting on its fold, thread spools and a tailor's measuring tape at the bench edge">
+  <figcaption>The bench, garment by garment, each one marked and waiting.</figcaption>
+</figure>
+
+<section class="hold">
+  <h2>Stated limits</h2>
+  <ul>
+    <li>A default run changes no scanned file; it only writes the patch file.</li>
+    <li>Passing <code>--apply</code> applies the code changing patches in place, per file from the highest line number down.</li>
+    <li>Suggestions that only add a comment, such as the <code>os.system</code> and <code>pickle.load</code> warnings, change no code: they are written to the patch file as manual steps, are never auto applied, and are logged as manual steps, not as applied fixes.</li>
+    <li><code>--approval_required</code> has no effect without <code>--apply</code>.</li>
+    <li><code>--vulnerability_id</code> arrives with no description provided, and the <code>--output_patch_path</code> entry breaks off before its default value; neither gap is filled in here.</li>
+  </ul>
 </section>
-<div class="cut"></div>
-<section class="box"><h2>Getting It and Calling It</h2>
-<pre>git clone https://github.com/ShadowStrikeHQ/avr-vulncodelineremediator</pre>
-<p>The clone line is printed exactly as the source gives it. Beside it, in plain words: the clone names ShadowStrikeHQ while this repository lives under ShadowGuard-AI.</p>
-<pre>./avr-vulncodelineremediator [params]</pre>
-<p>No worked example call appears in the source. The usage line gives the program name followed by parameters in brackets, and this panel does not invent a call to fill the gap.</p>
-<p><a href="https://github.com/ShadowGuard-AI/avr-vulncodelineremediator">The repository on GitHub</a></p>
-</section>
-<div class="cut"></div>
-<section class="box" id="params"><h2>The Seven Parameters</h2>
-<div class="param"><b>-h</b><span>Shows the help message and exits.</span></div>
-<div class="param"><b>--vulnerability_id</b><span class="absent">Listed with no description provided. This offcut carries that absence in amber and guesses nothing.</span></div>
-<div class="param"><b>--codebase_path</b><span>The path to the codebase to scan.</span></div>
-<div class="param"><b>--output_patch_path</b><span>The path to save the generated patch file. Defaults to <span class="absent">[the source line stops at the words Defaults to, with nothing after them, so this sentence is printed unfinished and the default is marked as not stated.]</span></span></div>
-<div class="param"><b>--apply</b><span>Apply code changing patches to the files in place. Without this flag a run only writes the patch file and changes no scanned file. Comment only suggestions are never applied; they appear in the patch file as manual steps.</span></div>
-<div class="param"><b>--approval_required</b><span>With --apply, ask before applying each patch. Has no effect without --apply.</span></div>
-<div class="param"><b>--exploit_db_url</b><span>The base URL of the Exploit Database to use for vulnerability information.</span></div>
-</section>
-<div class="cut"></div>
-<section class="box" id="licence"><h2>Licence</h2>
-<p>The bench closes with the line as written, with no licence named, reproduced as written:</p>
-<pre>Copyright (c) ShadowStrikeHQ</pre>
-</section>
-</main>
-<footer><p>Theme: Meteorite Saw and the Widmanstatten Lines. Type: Bahiana for display, Alegreya Sans for reading, both SIL Open Font License 1.1. The lettering reference Spin Cycle was reference only and is not embedded.</p></footer>
+
+<footer>
+  <p>The README of avr-vulncodelineremediator closes with a copyright line naming ShadowStrikeHQ and names no licence. Site type is set in Kalam and Hind Madurai, self-hosted under the SIL Open Font License.</p>
+</footer>
+</div>
 </body>
 </html>
