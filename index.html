@@ -17,6 +17,7 @@
 body { margin: 0; background: var(--bench); color: var(--ink); font-family: "Hind Madurai", sans-serif; line-height: 1.55; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 64px; }
 header.hero { text-align: center; padding: 52px 0 8px; }
+img.hero-logo { width: min(430px, 82vw); border-radius: 8px; box-shadow: 0 10px 34px rgba(43,39,36,.25); }
 h1, h2 { font-family: "Kalam", cursive; font-weight: 700; line-height: 1.15; }
 h1 { font-size: clamp(28px, 5vw, 46px); margin: 10px 0 6px; }
 .tagline { color: var(--soft); font-size: 19px; margin: 0 auto; max-width: 660px; }
@@ -45,6 +46,7 @@ footer { margin-top: 52px; border-top: 2px dashed var(--line); padding-top: 16px
 <body>
 <div class="wrap">
 <header class="hero">
+  <img class="hero-logo" src="assets/logo.png" alt="Folded charcoal suiting on a pine board: a needle threaded with red resting on the cloth above the fold, a spool of red thread beside the cloth, and a plain white triangular piece of tailor's chalk lying unused across the lower fold">
   <h1>avr-vulncodelineremediator</h1>
   <p class="tagline">The Alteration Bench. Given a known vulnerability and a codebase, this tool marks the lines that may need remediation and writes them into a patch file. Like chalk on suiting, the marks come first; a default run cuts nothing.</p>
   <div class="btns">
